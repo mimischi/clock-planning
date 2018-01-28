@@ -1,15 +1,77 @@
-#+begin_src plantuml :file shifts.png
-start
-
-if (Graphviz installed?) then (yes)
-  :process all\ndiagrams;
+#+begin_src plantuml :file begin_shift.png
+:Start new shift;
+if (Overlaps with other shifts?) then (yes)
+  if (Make a choice) then (Choice A)
+    :Delete other shift.;
+  else (Choice B)
+    :Keep other shift.
+    Do not start new shift.;
+    stop
+  endif
 else (no)
-  :process only
-  __sequence__ and __activity__ diagrams;
+  if (Total worktime of current day >= 10h?) then (yes)
+    :Abort shift creation;
+    stop
+  endif
 endif
-
-stop
+:Create new shift object;
 #+end_src
 
 #+RESULTS:
-[[file:shifts.png]]
+[[file:begin_shift.png]]
+
+#+begin_src plantuml :file finish_shift.png
+:Finish running shift;
+if (Overlaps with other shift?) then (yes)
+  :Make a choice;
+    split
+    :Delete existing
+    overlapping shift.;
+
+    split again
+    :Keep other shift.
+    Throw away clocked
+    time of current shift.;
+    stop
+
+    split again
+    :Finish current shift
+    right before other
+    shift starts.;
+
+    split again
+    :Move start of other shift
+    to end of current shift.;
+    end split
+else (no)
+  :;
+  floating note left: Maybe we should //not//\ndo the next check here.\nSplitting could be done\non-the-fly during export.
+  if (Total shift duration >6h?) then (yes)
+    if (Total shift duration >9h45m) then (yes)
+      :User has to take a long pause!
+      Split shift into two, keeping
+      a pause in between.
+      Pause=45min;
+    else (no)
+      if (Total shift duration >6h30min) then (yes)
+        :User has to take a pause!
+        Split shift into two, keeping
+        a pause in between.
+        Pause=30min;
+      endif
+    endif
+  else (no)
+    if (Start & end of shift on different days?) then (yes)
+      :Split shift into two.
+      End first shift at 23:59:59.
+      Create second shift starting
+      at 00:00:00.;
+      :Check for overlaps;
+     endif
+  endif
+endif
+:Complete shift.;
+#+end_src
+
+#+RESULTS:
+[[file:finish_shift.png]]
