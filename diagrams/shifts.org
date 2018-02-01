@@ -44,31 +44,13 @@ if (Overlaps with other shift?) then (yes)
     to end of current shift.;
     end split
 else (no)
-  :;
-  floating note left: Maybe we should //not//\ndo the next check here.\nSplitting could be done\non-the-fly during export.
-  if (Total shift duration >6h?) then (yes)
-    if (Total shift duration >9h45m) then (yes)
-      :User has to take a long pause!
-      Split shift into two, keeping
-      a pause in between.
-      Pause=45min;
-    else (no)
-      if (Total shift duration >6h30min) then (yes)
-        :User has to take a pause!
-        Split shift into two, keeping
-        a pause in between.
-        Pause=30min;
-      endif
+  if (Start & end of shift on different days?) then (yes)
+    :Split shift into two.
+    End first shift at 23:59:59.
+    Create second shift starting
+    at 00:00:00.;
+    :Check for overlaps;
     endif
-  else (no)
-    if (Start & end of shift on different days?) then (yes)
-      :Split shift into two.
-      End first shift at 23:59:59.
-      Create second shift starting
-      at 00:00:00.;
-      :Check for overlaps;
-     endif
-  endif
 endif
 :Complete shift.;
 #+end_src
