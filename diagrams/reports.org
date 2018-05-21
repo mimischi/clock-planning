@@ -1,0 +1,65 @@
+#+begin_src plantuml :file create_new_report.png
+  :Start new report;
+  if (Does user exist?) then (yes)
+    if (Does contract exist?) then (yes)
+      if (Does a report for this month exist?) then (no)
+         if (Does report for this user, contract and following month exist?) then (no)
+         else (yes)
+           stop
+         endif
+      else (yes)
+         stop
+      endif
+    else (no)
+      stop
+    endif
+  else (no)
+    stop
+  endif
+  :Create new report object;
+#+end_src
+
+#+RESULTS:
+[[file:create_new_report.png]]
+
+#+begin_src plantuml :file create_new_contract.png
+  :Create new contract;
+  if (Start/End date set?) then (no)
+   stop
+  else (yes)
+    if (Start/End date this month?) then (yes)
+    else (no)
+      split
+      :Import previous months AZK data (Urlaubsanspruch, ...);
+
+      split again
+      :Ask user to import all previous shifts manually.
+      (Disallow to create shifts in previous months);
+      end split
+
+    endif
+  endif
+  :Create new report;
+#+end_src
+
+#+RESULTS:
+[[file:create_new_contract.png]]
+
+#+begin_src plantuml :file create_update_shift.png
+  :Finish shift;
+  :Update Soll/Ist-Werte for current Report object;
+#+end_src
+
+#+RESULTS:
+[[file:create_update_shift.png]]
+
+#+begin_src plantuml :file export_report.png
+  :Export report;
+  :Set corresponding Shifts to read-only;
+  :Perform consistency checks.
+  (Ask user to move shifts from
+  current to next month?);
+#+end_src
+
+#+RESULTS:
+[[file:export_report.png]]
